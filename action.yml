@@ -27,6 +27,8 @@ runs:
       run: |
         REPO=$(git remote get-url origin)
         REPO=${REPO%".git"}
+        GITHUB_TOKEN=${{ inputs.github-token }}
+        echo "github-token=$GITHUB_TOKEN"
         BRANCH=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
         OUT=$(npx --yes mobbdev@latest analyze --ci -r $REPO --ref $BRANCH --api-key ${{ inputs.api-key }} -f ${{ inputs.report-file }})
         RETVAL=$?
@@ -34,6 +36,7 @@ runs:
           exit $RETVAL
         fi
         OUT=$(echo $OUT | tr '\n' ' ')
+       
         echo "fix-report-url=$OUT" >> $GITHUB_OUTPUT
       shell: bash -l {0}
     - uses: Sibz/github-status-action@v1
