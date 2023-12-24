@@ -31,6 +31,10 @@ runs:
         GITHUB_TOKEN=${{ inputs.github-token }}
         
         echo $GITHUB_HEAD_REF
+        echo GITHUB_REF-$GITHUB_REF
+        echo BRANCH-$BRANCH
+        echo GITHUB_SHA-$GITHUB_SHA
+        echo GITHUB_TOTEN-$${{ inputs.github-token }}
         BRANCH=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
         OUT=$(npx --yes testing-bugsy@latest review  -r $REPO --ref $BRANCH --ch $GITHUB_SHA --api-key ${{ inputs.api-key }} -f ${{ inputs.report-file }}  --pr 3 --github-token ${{ inputs.github-token }})
         RETVAL=$?
