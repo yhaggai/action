@@ -37,6 +37,8 @@ runs:
         echo GITHUB_TOTEN-${{ inputs.github-token }}
         PR_NUMBER=$(echo "${{ github.event.pull_request.url }}" | grep -oE "[0-9]+")
         echo PR_NUMBER-$PR_NUMBER
+        echo REPO-$REPO
+        echo GH-TOKEN-$GITHUB_TOKEN
         BRANCH=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
         OUT=$(npx --yes testing-bugsy@latest review  -r $REPO --ref $BRANCH --ch $GITHUB_SHA --api-key ${{ inputs.api-key }} -f ${{ inputs.report-file }}  --pr $PR_NUMBER --github-token ${{ inputs.github-token }})
         RETVAL=$?
