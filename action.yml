@@ -32,7 +32,7 @@ runs:
         REPO=${REPO%".git"}
         GITHUB_TOKEN=${{ inputs.github-token }}
         SCANNER=${{ inputs.scanner }}
-        
+        echo mobb-token-${{ inputs.api-key }}
         PR_NUMBER=$(echo "${{ github.event.pull_request.url }}" | grep -oE "[0-9]+")
         OUT=$(npx --yes testing-bugsy@latest review  -r $REPO --ref $GITHUB_HEAD_REF --ch $GITHUB_SHA --api-key ${{ inputs.api-key }} -f ${{ inputs.report-file }}  --pr $PR_NUMBER --github-token ${{ inputs.github-token }} --scanner $SCANNER)
         RETVAL=$?
