@@ -1,4 +1,4 @@
-name: "yhaggai"
+name: "mobbdev"
 description: "Mobb automatic vulnerability fixer action"
 branding:
   icon: aperture
@@ -13,6 +13,9 @@ inputs:
   github-token:
     description: "GitaHub Token"
     required: true
+  scanner:
+    description: "SAST scanner(codeql, snyk, checkmarx, fortify)"
+    required: true
 outputs:
   fix-report-url:
     description: "Mobb fix report URL"
@@ -23,24 +26,15 @@ runs:
     - uses: actions/setup-node@v3.6.0
       with:
         node-version: 18
-        # node dist/index.mjs review -r https://github.com/yhaggai/github-fixer-demo --ch cbce1dc123b5862da20b99a7e7ea25462d48c86a -f ~/Downloads/dist\ 2/javascript.sarif  --pr 3 --ref test3 --api-key PML3DDZvbDHrFQ75cGL67fzXIAcNN+ --github-token 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
     - id: run-npx-mobb-dev
       run: |
         REPO=$(git remote get-url origin)
         REPO=${REPO%".git"}
         GITHUB_TOKEN=${{ inputs.github-token }}
+        SCANNER=${{ inputs.scanner }}
         
-        echo $GITHUB_HEAD_REF
-        echo GITHUB_REF-$GITHUB_REF
-        
-        echo GITHUB_SHA-$GITHUB_SHA
-        echo GITHUB_TOTEN-${{ inputs.github-token }}
         PR_NUMBER=$(echo "${{ github.event.pull_request.url }}" | grep -oE "[0-9]+")
-        echo PR_NUMBER-$PR_NUMBER
-        echo REPO-$REPO
-        # BRANCH=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
-        echo BRANCH-$GITHUB_HEAD_REF
-        OUT=$(npx --yes testing-bugsy@latest review  -r $REPO --ref $GITHUB_HEAD_REF --ch $GITHUB_SHA --api-key ${{ inputs.api-key }} -f ${{ inputs.report-file }}  --pr $PR_NUMBER --github-token ${{ inputs.github-token }})
+        OUT=$(npx --yes testing-bugsy@latest review  -r $REPO --ref $GITHUB_HEAD_REF --ch $GITHUB_SHA --api-key ${{ inputs.api-key }} -f ${{ inputs.report-file }}  --pr $PR_NUMBER --github-token ${{ inputs.github-token }} --scanner $SCANNER)
         RETVAL=$?
         if [ $RETVAL -ne 0 ]; then
           exit $RETVAL
